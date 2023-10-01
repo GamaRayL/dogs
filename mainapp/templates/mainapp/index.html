@@ -1,0 +1,9 @@
+{% extends 'mainapp/base.html' %}
+
+{% block content %}
+    <div class="row">
+        {% for object in object_list %}
+            {% include 'mainapp/includes/inc_breed.html' with object=object%}
+        {% endfor %}
+    </div>
+{% endblock %}

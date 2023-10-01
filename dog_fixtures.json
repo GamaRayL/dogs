@@ -1,0 +1,22 @@
+[
+  {
+    "model": "mainapp.dog",
+    "pk": 1,
+    "fields": {
+      "nickname": "Барон",
+      "breed": 1,
+      "photo": "photos/baron.jpg",
+      "birth_date": "2020-05-15"
+    }
+  },
+  {
+    "model": "mainapp.dog",
+    "pk": 2,
+    "fields": {
+      "nickname": "Макс",
+      "breed": 2,
+      "photo": "photos/max.jpg",
+      "birth_date": "2019-11-20"
+    }
+  }
+]

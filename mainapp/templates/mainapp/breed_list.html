@@ -1,0 +1,13 @@
+{% extends 'mainapp/base.html' %}
+{% block content %}
+
+<div class="row">
+    <div class="col-12 mb-2">
+        <a class="btn btn-primary" href={% url 'mainapp:dog_create' %}>Добавить пса</a>
+    </div>
+    {% for object in object_list %}
+        {% include 'mainapp/includes/inc_breed.html' %}
+    {% endfor %}
+</div>
+
+{% endblock %}

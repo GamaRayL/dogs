@@ -1,0 +1,18 @@
+[
+  {
+    "model": "mainapp.breed",
+    "pk": 1,
+    "fields": {
+      "name": "Labrador Retriever",
+      "description": "Порода средних и крупных собак, известная своей дружелюбностью и энергичностью."
+    }
+  },
+  {
+    "model": "mainapp.breed",
+    "pk": 2,
+    "fields": {
+      "name": "German Shepherd",
+      "description": "Порода средних и крупных собак, известная своей преданностью и интеллектом."
+    }
+  }
+]

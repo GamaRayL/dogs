@@ -1,0 +1,15 @@
+<div class="col-md-4">
+    <div class="card mb-4 box-shadow">
+        <div class="card-header">
+            <div class="card-title">{{ object.name }}</div>
+        </div>
+        <div class="card-body">
+            <div class="card-text">{{ object.description }}</div>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-success" href="{% url 'mainapp:breed_dogs' object.pk %}" role="button">
+                К собакам
+            </a>
+        </div>
+    </div>
+</div>
