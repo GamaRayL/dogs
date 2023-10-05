@@ -1,17 +1,17 @@
 {% extends 'mainapp/base.html' %}
 
 {% block content %}
-    <form method="post" class="row" enctype="multipart/form-dataa">
+    <form method="post" class="row" enctype="multipart/form-data">
         <div class="col-4">
             <div class="card">
-                <div class="card_header">
+                <div class="card-header">
                     {% if object %}
                         Редактирование собаки
                     {% else %}
                         Добавление собаки
                     {% endif %}
                 </div>
-                <div class="card_body">
+                <div class="card-body">
                   {% csrf_token %}
                   {{ form.as_p }}
                   <button type="submit" class="btn btn-primary">
@@ -27,8 +27,8 @@
 
         <div class="col-4">
             <div class="card">
-                <div class="card_header">Корм собаки</div>
-                <div class="card_body">
+                <div class="card-header">Корм собаки</div>
+                <div class="card-body">
                     {{ food_formset.management_form }}
                     {% for form in food_formset.forms %}
                         {{ form.as_p }}
@@ -42,8 +42,8 @@
 
         <div class="col-4">
             <div class="card">
-                <div class="card_header">Родитель</div>
-                <div class="card_body">
+                <div class="card-header">Родитель</div>
+                <div class="card-body">
                     {{ parent_formset.management_form }}
                     {% for form in parent_formset.forms %}
                         {{ form.as_p }}

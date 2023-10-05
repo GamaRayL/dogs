@@ -43,6 +43,9 @@ class DogListView(ListView):
         context_data = super().get_context_data(*args, **kwargs)
 
         breed_item = Breed.objects.get(pk=self.kwargs.get('pk'))
+        context_data['object_list'] = (
+            Dog.objects.filter(breed_id=breed_item, owner=self.request.user)
+        )
         context_data['breed_pk'] = breed_item.pk
         context_data['title'] = f'Собаки породы - {breed_item.name}'
 
@@ -51,9 +54,15 @@ class DogListView(ListView):
 
 class DogCreateView(CreateView):
     model = Dog
-    # fields = ('nickname', 'breed', 'birth_date')
     form_class = DogForm
     success_url = reverse_lazy('mainapp:breeds')
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.owner = self.request.user
+        self.object.save()
+
+        return super().form_valid(form)
 
 
 class DogUpdateView(UpdateView):
@@ -95,4 +104,3 @@ class DogUpdateView(UpdateView):
 class DogDeleteView(DeleteView):
     model = Dog
     success_url = reverse_lazy('mainapp:breeds')
-

@@ -10,7 +10,9 @@
                          src="{{ object.photo|mymedia }}"
                          alt="Card image cap">
                     <div class="card-body">
-                        <div class="card-title">{{ object.nickname|title }}</div>
+                        <p class="card-title">{{ object.nickname|title }}</p>
+                        <p class="text-muted">{{ object.birth_date|default:'-' }}</p>
+                        <p class="text-muted">Хозяин: {{ object.owner|default:'Без хозяина' }}</p>
                     </div>
                     <div class="card-footer">
                         <a class="btn btn-link" href={% url 'mainapp:dog_update' object.pk %}>Изменить</a>

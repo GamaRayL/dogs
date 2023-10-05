@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 NULLABLE = {'null': True, 'blank': True}
 
@@ -22,6 +23,11 @@ class Dog(models.Model):
     photo = models.ImageField(upload_to='photos/', verbose_name='фотография', **NULLABLE)
     birth_date = models.DateField(verbose_name='дата рождения', **NULLABLE)
     email = models.CharField(max_length=150, unique=True, verbose_name='почта', **NULLABLE)
+
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              on_delete=models.SET_NULL,
+                              verbose_name='владелец',
+                              **NULLABLE)
 
     def __str__(self):
         return f'{self.nickname} {self.breed} {self.birth_date}'
