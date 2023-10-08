@@ -15,6 +15,7 @@
                         <p class="text-muted">Хозяин: {{ object.owner|default:'Без хозяина' }}</p>
                     </div>
                     <div class="card-footer">
+                        <a class="btn btn-primary" href={% url 'mainapp:view_dog' object.pk %}>Просмотр</a>
                         <a class="btn btn-link" href={% url 'mainapp:dog_update' object.pk %}>Изменить</a>
                         <a class="btn btn-danger float-end" href={% url 'mainapp:dog_delete' object.pk %}>Удалить</a>
                     </div>

@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.core.cache import cache
 from django.forms import inlineformset_factory
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
@@ -99,6 +101,25 @@ class DogUpdateView(UpdateView):
             parent_formset.save()
 
         return super().form_valid(form)
+
+
+class DogDetailView(DetailView):
+    model = Dog
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+
+        if settings.CACHE_ENABLED:
+            key = f'food_list_{self.object.pk}'
+            food_list = cache.get(key)
+            if food_list is None:
+                food_list = self.object.food_set.all()
+                cache.set(key, food_list)
+        else:
+            food_list = self.object.food_set.all()
+
+        context_data['foods'] = food_list
+        return context_data
 
 
 class DogDeleteView(DeleteView):
