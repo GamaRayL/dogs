@@ -1,15 +1,15 @@
-from django.conf import settings
-from django.core.cache import cache
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.forms import inlineformset_factory
-from django.shortcuts import render
+from django.http import Http404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView
 
 from mainapp.forms import DogForm, FoodForm, ParentForm
 from mainapp.models import Breed, Dog, Food, Parent
+from mainapp.services import get_cached_foods_for_dogs
 
 
-class IndexView(TemplateView):
+class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'mainapp/index.html'
     extra_context = {
         'title': 'Популярные породы'
@@ -21,23 +21,26 @@ class IndexView(TemplateView):
         return context_data
 
 
-class BreedListView(ListView):
+class BreedListView(LoginRequiredMixin, ListView):
     model = Breed
     extra_context = {
         'title': 'Все породы'
     }
 
 
-class BreedDetailView(DetailView):
+class BreedDetailView(LoginRequiredMixin, DetailView):
     model = Breed
 
 
-class DogListView(ListView):
+class DogListView(LoginRequiredMixin, ListView):
     model = Dog
 
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(breed_id=self.kwargs.get('pk'))
+
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(owner=self.request.user)
 
         return queryset
 
@@ -45,18 +48,16 @@ class DogListView(ListView):
         context_data = super().get_context_data(*args, **kwargs)
 
         breed_item = Breed.objects.get(pk=self.kwargs.get('pk'))
-        context_data['object_list'] = (
-            Dog.objects.filter(breed_id=breed_item, owner=self.request.user)
-        )
         context_data['breed_pk'] = breed_item.pk
         context_data['title'] = f'Собаки породы - {breed_item.name}'
 
         return context_data
 
 
-class DogCreateView(CreateView):
+class DogCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Dog
     form_class = DogForm
+    permission_required = 'mainapp.add_dog'
     success_url = reverse_lazy('mainapp:breeds')
 
     def form_valid(self, form):
@@ -67,9 +68,16 @@ class DogCreateView(CreateView):
         return super().form_valid(form)
 
 
-class DogUpdateView(UpdateView):
+class DogUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Dog
+    permission_required = 'mainapp.change_dog'
     form_class = DogForm
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
+            raise Http404
+        return self.object
 
     def get_success_url(self):
         return reverse('mainapp:breed_dogs', args=[self.object.breed.pk])
@@ -103,25 +111,17 @@ class DogUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class DogDetailView(DetailView):
+class DogDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Dog
+    permission_required = 'mainapp.view_dog'
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-
-        if settings.CACHE_ENABLED:
-            key = f'food_list_{self.object.pk}'
-            food_list = cache.get(key)
-            if food_list is None:
-                food_list = self.object.food_set.all()
-                cache.set(key, food_list)
-        else:
-            food_list = self.object.food_set.all()
-
-        context_data['foods'] = food_list
+        context_data['foods'] = get_cached_foods_for_dogs(self.object.pk)
         return context_data
 
 
-class DogDeleteView(DeleteView):
+class DogDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Dog
+    permission_required = 'mainapp.delete_dog'
     success_url = reverse_lazy('mainapp:breeds')

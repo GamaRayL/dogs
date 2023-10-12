@@ -25,6 +25,7 @@
             </div>
         </div>
 
+        {% if perms.dogs.change_food %}
         <div class="col-4">
             <div class="card">
                 <div class="card-header">Корм собаки</div>
@@ -39,7 +40,9 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
+        {% if perms.dogs.change_parent %}
         <div class="col-4">
             <div class="card">
                 <div class="card-header">Родитель</div>
@@ -54,5 +57,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
+
     </form>
 {% endblock %}

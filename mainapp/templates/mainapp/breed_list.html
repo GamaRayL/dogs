@@ -3,7 +3,9 @@
 
 <div class="row">
     <div class="col-12 mb-2">
+        {% if perms.dogs.add_dog %}
         <a class="btn btn-primary" href={% url 'mainapp:dog_create' %}>Добавить пса</a>
+        {% endif %}
     </div>
     {% for object in object_list %}
         {% include 'mainapp/includes/inc_breed.html' %}
